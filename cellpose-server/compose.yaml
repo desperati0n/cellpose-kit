@@ -1,0 +1,32 @@
+services:
+  cellpose:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        CELLPOSE_LOCAL_MODELS_PATH: "${CELLPOSE_LOCAL_MODELS_PATH}"
+    image: "${CELLPOSE_IMAGE}"
+    restart: "${CELLPOSE_RESTART_POLICY}"
+    env_file:
+      - ./.env
+    ports:
+      - "${CELLPOSE_BIND_HOST}:${CELLPOSE_BIND_PORT}:${CELLPOSE_CONTAINER_PORT}"
+    volumes:
+      - "cellpose-models:${CELLPOSE_LOCAL_MODELS_PATH}"
+    shm_size: "${CELLPOSE_SHM_SIZE}"
+    healthcheck:
+      test: ["CMD", "python", "healthcheck.py"]
+      interval: "${CELLPOSE_HEALTHCHECK_INTERVAL}"
+      timeout: "${CELLPOSE_HEALTHCHECK_TIMEOUT}"
+      start_period: "${CELLPOSE_HEALTHCHECK_START_PERIOD}"
+      retries: ${CELLPOSE_HEALTHCHECK_RETRIES}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: ${CELLPOSE_GPU_COUNT}
+              capabilities: [gpu]
+
+volumes:
+  cellpose-models:
