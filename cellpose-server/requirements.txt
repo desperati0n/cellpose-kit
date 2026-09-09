@@ -1,0 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.11.0+cu128
+torchvision==0.26.0+cu128
+cellpose==4.2.1.1
+packaging>=24.0,<26
+fastapi>=0.115,<1
+uvicorn[standard]>=0.34,<1
+python-multipart>=0.0.20,<1
+tifffile>=2024.12.12
+pillow>=10,<13

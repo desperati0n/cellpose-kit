@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cellpose Segmentation"
+  short_description: "Segment microscopy images through a Cellpose-SAM service"
+  default_prompt: "Use $cellpose-segmentation to segment this microscopy image and return the instance mask and preview."
