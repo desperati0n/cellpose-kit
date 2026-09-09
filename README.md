@@ -27,7 +27,7 @@ cellpose-kit/
     └── .env.example                 可分发的调用端配置模板
 ```
 
-`cellpose-server` 用于部署和维护模型服务，`cellpose-segmentation` 用于安装为 Codex Skill 并调用该服务。交付时按使用目的分别提供对应文件夹即可。
+`cellpose-server` 用于部署和维护模型服务，`cellpose-segmentation` 用于安装为 Skill 并调用该服务。交付时按使用目的分别提供对应文件夹即可。
 
 ## 3. 各部分之间的关系
 
@@ -193,11 +193,7 @@ http://127.0.0.1:8000/docs
 
 将整个 `cellpose-segmentation` 文件夹交给支持 Skill 的 Agent 安装即可。该文件夹包含 `SKILL.md`、调用脚本、配置模板和接口说明。
 
-可以直接跟agent说:帮我安装这个skill
-
 ## 9. 调用方法
-
-### 9.1 自己操作
 
 进入已经安装的 Skill 目录后执行：
 
@@ -222,15 +218,6 @@ python scripts/segment.py "path/to/sample.tif" --output "path/to/sample_cellpose
 ```shell
 python scripts/segment.py "path/to/sample.tif" --output "path/to/sample_cellpose" --keep-zip
 ```
-
-### 9.2 使用 AI 调用
-
-告诉 AI 使用此 Skill 即可，例如：
-
-```text
-使用这个 Skill 分割这张显微图像。
-```
-
 
 ## 10. HTTP 接口
 
@@ -281,3 +268,4 @@ Content-Type: multipart/form-data
 | 首次启动长时间处于 starting | 通常正在加载或准备模型；查看日志并等待健康检查通过 |
 | 输出目录非空而脚本退出 | 脚本在防止覆盖；换一个目录或确认后使用 `--force` |
 | 没有 `overlay.png` | 输入无法生成兼容的二维预览；检查 `metadata.json` 的 `overlay_created` |
+
