@@ -1,3 +1,5 @@
+[**English**](service-connection.md) | [简体中文](service-connection.zh-CN.md)
+
 # Service connection
 
 This Skill is a client for an independently deployed Cellpose-SAM HTTP service. It does not install, start, or configure the model server.

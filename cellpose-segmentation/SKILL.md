@@ -5,6 +5,8 @@ description: Segment 2D microscopy images into labeled cell instances by calling
 
 # Cellpose Segmentation
 
+[中文参考](SKILL.zh-CN.md)
+
 Resolve bundled paths relative to this `SKILL.md`. Send each local microscopy image to the service with the bundled client:
 
 ```bash

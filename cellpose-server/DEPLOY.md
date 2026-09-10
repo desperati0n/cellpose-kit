@@ -1,42 +1,44 @@
-# Cellpose Server 部署说明
+[**English**](DEPLOY.md) | [简体中文](DEPLOY.zh-CN.md)
 
-## 1. 准备配置
+# Cellpose Server Deployment
 
-本目录不携带真实密钥。首次部署时复制配置模板：
+## 1. Prepare configuration
+
+This directory does not contain real credentials. Copy the template once:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Linux：
+Linux/macOS:
 
 ```bash
 cp .env.example .env
 ```
 
-此后只编辑 `.env`。至少检查 `CELLPOSE_API_KEY`、模型、设备、监听地址和端口；不要把含真实密钥的 `.env` 提交或交付给其他人。
+Edit only `.env` afterward. At minimum, review `CELLPOSE_API_KEY`, model, device, bind address, and port. Never commit or distribute an `.env` containing a real key.
 
-## 2. 启动 GPU 服务
+## 2. Start the GPU service
 
-服务器需要 Docker Engine、Docker Compose、NVIDIA 驱动和 NVIDIA Container Toolkit。
+The host needs Docker Engine, Docker Compose, an NVIDIA driver, and NVIDIA Container Toolkit.
 
 ```bash
 docker compose --env-file .env up --build -d
 docker compose --env-file .env logs -f cellpose
 ```
 
-容器直接通过 Uvicorn 启动 `app:app`，没有额外的 `start.py`。第一次启动会下载 `.env` 中 `CELLPOSE_MODEL` 指定的模型，并保存到 `cellpose-models` Docker Volume，因此就绪时间较长。
+The container starts `app:app` directly through Uvicorn; there is no separate `start.py`. On first startup, the configured `CELLPOSE_MODEL` may be downloaded and stored in the `cellpose-models` Docker volume, so readiness may take longer.
 
-## 3. 检查状态
+## 3. Check status
 
 ```bash
 docker compose --env-file .env ps
 docker compose --env-file .env exec cellpose python healthcheck.py
 ```
 
-健康检查成功后，调用端使用 `.env` 中配置的主机端口访问 `/v1/segment`。
+After the health check passes, clients call `/v1/segment` through the host port configured in `.env`.
 
-## 4. 停止服务
+## 4. Stop or remove the service
 
 ```bash
 docker compose --env-file .env stop
@@ -44,18 +46,18 @@ docker compose --env-file .env start
 docker compose --env-file .env down
 ```
 
-`down` 默认保留模型 Volume。除非确实要重新下载模型，否则不要执行带 `-v` 的 `down`。
+`down` preserves the model volume by default. Do not add `-v` unless the model cache should also be removed.
 
 ## 5. API
 
-- `GET /healthz`：返回服务状态、版本、模型和推理设备。
-- `POST /v1/segment`：接收 `multipart/form-data`，图像字段名为 `file`；分割参数的默认值统一来自 `.env`。
-- 配置了 `CELLPOSE_API_KEY` 时，请求必须携带同值的 `X-API-Key`。
-- 成功响应为 ZIP，包含 `mask.tif`、`metadata.json`、`instances.csv`，通常还包含 `overlay.png`。
-- FastAPI 自动接口文档位于 `/docs`。
+- `GET /healthz` returns service state, version, model, and inference device.
+- `POST /v1/segment` accepts `multipart/form-data`; the image field is `file`, and parameter defaults come from `.env`.
+- When `CELLPOSE_API_KEY` is configured, requests must provide the same value in `X-API-Key`.
+- A successful ZIP response contains `mask.tif`, `metadata.json`, `instances.csv`, and normally `overlay.png`.
+- FastAPI documentation is available at `/docs`.
 
-## 6. 安全边界
+## 6. Security boundary
 
-默认绑定设置仅允许本机访问。需要远程调用时，通过受保护的内网或带 TLS 的反向代理开放，并设置强 API Key；不要直接把未加密、未认证的推理端口暴露到公网。
+The default bind configuration is intended for local access. For remote use, place the service behind a protected private network or TLS-enabled reverse proxy and use a strong API key. Do not expose an unencrypted, unauthenticated inference port directly to the internet.
 
-每个容器一次只执行一个推理任务，以降低 GPU 显存竞争。当前 Compose 配置面向 NVIDIA GPU；CPU 部署需要移除 GPU 设备预留，并在 `.env` 中选择 CPU 设备。
+One container executes one inference request at a time to reduce GPU-memory contention. The Compose file targets NVIDIA GPUs; a CPU deployment must remove the GPU-device reservation and select a CPU device in `.env`.
