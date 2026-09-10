@@ -4,6 +4,8 @@
 
 此 Skill 使用 Cellpose-SAM、PyTorch 和 Docker 提供的服务，为二维显微图像进行细胞实例分割。服务端在 GPU 环境中加载模型并完成分割；Skill 负责将本地图片发送到服务端，再把掩膜、预览图和统计结果返回给使用者或其他 Agent。
 
+本项目的模型选择来自对 Cellpose-SAM、MicroSAM DeepBacs、Omnipose 与传统算法的统一实测。完整的数据审计、评估口径、指标结果和四模型对比画廊见 [bacterial-segmentation-benchmark](https://github.com/desperati0n/bacterial-segmentation-benchmark)。
+
 ## 2. 目录结构
 
 ```text
